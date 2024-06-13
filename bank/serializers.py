@@ -50,6 +50,18 @@ class TransactionSerializer(serializers.ModelSerializer):
         if 'request' in self.context:
             self.fields['account'].queryset = self.fields['account'].queryset.filter(user=self.context['view'].request.user)
 
+    class Meta:
+        model = Transfer
+        fields = ('id', 'from_account', 'to_account', 'amount')
+        read_only_fields = ('id',)
+
+
+class TransferSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(TransferSerializer, self).__init__(*args, **kwargs)
+        if 'request' in self.context:
+            self.fields['from_account'].queryset = self.fields['from_account'].queryset.filter(user=self.context['view'].request.user)
+
     to_account = serializers.CharField()
 
     def validate(self, data):
@@ -64,8 +76,4 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transfer
         fields = ('id', 'from_account', 'to_account', 'amount')
-        read_only_fields = ('id',)
-
-
-class TransferSerializer:
-    pass
+        read_only_fields = ('id', )
